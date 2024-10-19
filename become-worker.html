@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Worker - Taskly</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --secondary-color: #333;
+            --light-bg: #f8f9fa;
+            --error-color: #dc3545;
+            --warning-color: #ffc107;
+            --success-color: #28a745;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: var(--light-bg);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        nav {
+            background-color: white;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav ul li a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px 100px 20px;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .verification-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .verification-item {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .day-column {
+            text-align: center;
+        }
+
+        .time-slot {
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot.selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .flair-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .flair-tag {
+            background-color: #e9ecef;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .flair-tag.selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .required {
+            color: var(--error-color);
+            margin-left: 0.25rem;
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Become a Taskly Worker</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="create-task.html">Create Task</a></li>
+            <li><a href="become-worker.html">Become a Worker</a></li>
+            <li><a href="tasks.html">List of Tasks</a></li>
+            <li><a href="#messages">Messages</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <form id="workerRegistrationForm" class="form-container">
+            <div class="form-section">
+                <h2>Personal Information</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name<span class="required">*</span></label>
+                        <input type="text" id="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name<span class="required">*</span></label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email<span class="required">*</span></label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number<span class="required">*</span></label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="city">City<span class="required">*</span></label>
+                    <input type="text" id="city" required>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Services & Expertise</h2>
+                <div class="form-group">
+                    <label for="serviceType">Type of Service Offered<span class="required">*</span></label>
+                    <select id="serviceType" required multiple>
+                        <option value="home">Home Maintenance</option>
+                        <option value="garden">Gardening</option>
+                        <option value="delivery">Delivery</option>
+                        <option value="cleaning">Cleaning</option>
+                        <option value="assembly">Furniture Assembly</option>
+                        <option value="moving">Moving Help</option>
+                        <option value="tech">Tech Support</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="help-text">Hold Ctrl/Cmd to select multiple services</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Service Flairs</label>
+                    <div class="flair-container">
+                        <div class="flair-tag" data-flair="tools">Own Tools</div>
+                        <div class="flair-tag" data-flair="vehicle">Own Vehicle</div>
+                        <div class="flair-tag" data-flair="certified">Certified</div>
+                        <div class="flair-tag" data-flair="experienced">Experienced</div>
+                        <div class="flair-tag" data-flair="flexible">Flexible Hours</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="rate">Standard Hourly Rate (USD)<span class="required">*</span></label>
+                    <input type="number" id="rate" required min="15" step="0.50">
+                    <div class="help-text">Minimum rate is $15.00/hour</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Verification</h2>
+                <div class="verification-grid">
+                    <div class="verification-item">
+                        <label>
+                            <input type="checkbox" required>
+                            Government ID
+                        </label>
+                        <div class="help-text">Upload a clear photo of your ID</div>
+                        <input type="file" accept="image/*">
+                    </div>
+
+                    <div class="verification-item">
+                        <label>
+                            <input type="checkbox">
+                            Professional Certification
+                        </label>
+                        <div class="help-text">If applicable to your services</div>
+                        <input type="file" accept=".pdf,.jpg,.png">
+                    </div>
+
+                    <div class="verification-item">
+                        <label>
+                            <input type="checkbox" required>
+                            Background Check Authorization
+                        </label>
+                        <div class="help-text">Required for all workers</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Availability Schedule</h2>
+                <div class="schedule-grid">
+                    <div class="day-column">
+                        <h3>Mon</h3>
+                        <div class="time-slot">Morning</div>
+                        <div class="time-slot">Afternoon</div>
+                        <div class="time-slot">Evening</div>
+                    </div>
+                    <div class="day-column">
+                        <h3>Tue</h3>
+                        <div class="time-slot">Morning</div>
+                        <div class="time-slot">Afternoon</div>
+                        <div class="time-slot">Evening</div>
+                    </div>
+                    <div class="day-column">
+                        <h3>Wed</h3>
+                        <div class="time-slot">Morning</div>
+                        <div class="time-slot">Afternoon</div>
+                        <div class="time-slot">Evening</div>
+                    </div>
+                    <div class="day-column">
+                        <h3>Thu</h3>
+                        <div class="time-slot">Morning</div>
+                        <div class="time-slot">Afternoon</div>
+                        <div class="time-slot">Evening</div>
+                    </div>
+                    <div class="day-column">
+                        <h3>Fri</h3>
+                        <div class="time-slot">Morning</div>
+                        <div class="time-slot">Afternoon</div>
+                        <div class="time-slot">Evening</div>
+                    </div>
+                    <div class="day-column">
+                        <h3>Sat</h3>
+                        <div class="time-slot">Morning</div>
+                        <div class="time-slot">Afternoon</div>
+                        <div class="time-slot">Evening</div>
+                    </div>
+                    <div class="day-column">
+                        <h3>Sun</h3>
+                        <div class="time-slot">Morning</div>
+                        <div class="time-slot">Afternoon</div>
+                        <div class="time-slot">Evening</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit Application</button>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Taskly. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Toggle flair tags
+        document.querySelectorAll('.flair-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.classList.toggle('selected');
+            });
+        });
+
+        // Toggle time slots
+        document.querySelectorAll('.time-slot').forEach(slot => {
+            slot.addEventListener('click', () => {
+                slot.classList.toggle('selected');
+            });
+        });
+
+        // Form submission
+        document.getElementById('workerRegistrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            if (validateForm()) {
+                alert('Application submitted successfully! We will review your information and contact you soon.');
+                window.location.href = 'index.html';
+            }
+        });
+
+        function validateForm() {
+            const required = ['firstName', 'lastName', 'email', 'phone', 'city',

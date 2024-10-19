@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task - Taskly</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --secondary-color: #333;
+            --light-bg: #f8f9fa;
+            --error-color: #dc3545;
+            --warning-color: #ffc107;
+            --success-color: #28a745;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: var(--light-bg);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        nav {
+            background-color: white;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav ul li a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px 100px 20px;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .flair-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .flair-tag {
+            background-color: #e9ecef;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .flair-tag.selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .image-upload {
+            border: 2px dashed #ddd;
+            padding: 2rem;
+            text-align: center;
+            border-radius: var(--border-radius);
+            margin-top: 0.5rem;
+            cursor: pointer;
+        }
+
+        .image-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .warning-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            margin: 100px auto;
+            text-align: center;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: black;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .required {
+            color: var(--error-color);
+            margin-left: 0.25rem;
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Create a New Task</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="create-task.html">Create Task</a></li>
+            <li><a href="become-worker.html">Become a Worker</a></li>
+            <li><a href="tasks.html">List of Tasks</a></li>
+            <li><a href="#messages">Messages</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <form id="createTaskForm" class="form-container">
+            <div class="form-section">
+                <h2>Basic Information</h2>
+                <div class="form-group">
+                    <label for="name">Name<span class="required">*</span></label>
+                    <input type="text" id="name" required placeholder="Legal name or username">
+                    <div class="help-text">This name will be visible to workers who view your task</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskType">Type of Task<span class="required">*</span></label>
+                    <select id="taskType" required>
+                        <option value="">Select a task type</option>
+                        <option value="home">Home Maintenance</option>
+                        <option value="garden">Gardening</option>
+                        <option value="delivery">Delivery</option>
+                        <option value="cleaning">Cleaning</option>
+                        <option value="assembly">Furniture Assembly</option>
+                        <option value="moving">Moving Help</option>
+                        <option value="tech">Tech Support</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Task Flairs</label>
+                    <div class="flair-container">
+                        <div class="flair-tag" data-flair="urgent">Urgent</div>
+                        <div class="flair-tag" data-flair="flexible">Flexible Schedule</div>
+                        <div class="flair-tag" data-flair="tools-required">Tools Required</div>
+                        <div class="flair-tag" data-flair="heavy-lifting">Heavy Lifting</div>
+                        <div class="flair-tag" data-flair="vehicle-needed">Vehicle Needed</div>
+                        <div class="flair-tag" data-flair="expertise">Expertise Required</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Task Details</h2>
+                <div class="form-group">
+                    <label for="price">Budget (USD)<span class="required">*</span></label>
+                    <input type="number" id="price" required min="5" step="0.01">
+                    <div class="help-text">Minimum budget is $5.00</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location<span class="required">*</span></label>
+                    <input type="text" id="location" required placeholder="Enter task location">
+                </div>
+
+                <div class="form-group">
+                    <label for="deadline">Preferred Completion Date</label>
+                    <input type="date" id="deadline">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Task Description<span class="required">*</span></label>
+                    <textarea id="description" required placeholder="Provide detailed information about the task..."></textarea>
+                    <div class="help-text">Include all relevant details, requirements, and expectations</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Images</h2>
+                <div class="form-group">
+                    <label for="images">Add Images (Optional)</label>
+                    <div class="image-upload" onclick="document.getElementById('imageInput').click()">
+                        <input type="file" id="imageInput" hidden multiple accept="image/*">
+                        <p>Click to upload images or drag and drop here</p>
+                        <p class="help-text">Max 5 images, each under 5MB</p>
+                    </div>
+                    <div class="image-preview" id="imagePreview"></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="showWarning()">Create Task</button>
+            </div>
+        </form>
+    </main>
+
+    <div class="warning-modal" id="warningModal">
+        <div class="modal-content">
+            <h2>⚠️ Please Review Your Task</h2>
+            <p>Before creating this task, please confirm that:</p>
+            <ul style="text-align: left">
+                <li>All provided information is accurate</li>
+                <li>The task description is clear and detailed</li>
+                <li>Your budget is fair for the requested work</li>
+                <li>The task complies with our terms of service</li>
+            </ul>
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="hideWarning()">Review Again</button>
+                <button class="btn btn-warning" onclick="submitTask()">Confirm & Create Task</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Taskly. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Toggle flair tags
+        document.querySelectorAll('.flair-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.classList.toggle('selected');
+            });
+        });
+
+        // Image preview functionality
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            const files = event.target.files;
+
+            if (files.length > 5) {
+                alert('Please select a maximum of 5 images');
+                return;
+            }
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Each image must be under 5MB');
+                    continue;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'preview-image';
+                    preview.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Warning modal functions
+        function showWarning() {
+            if (validateForm()) {
+                document.getElementById('warningModal').style.display = 'block';
+            }
+        }
+
+        function hideWarning() {
+            document.getElementById('warningModal').style.display = 'none';
+        }
+
+        function validateForm() {
+            const required = ['name', 'taskType', 'price', 'location', 'description'];
+            let valid = true;
+
+            required.forEach(field => {
+                const element = document.getElementById(field);
+                if (!element.value) {
+                    alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()} field`);
+                    valid = false;
+                }
+            });
+
+            return valid;
+        }
+
+        function submitTask() {
+            // Here you would typically send the form data to your server
+            alert('Task created successfully!');
+            window.location.href = 'tasks.html';
+        }
+    </script>
+</body>
+</html>
